@@ -2,6 +2,7 @@ class Oystercard
 
 	BALANCE_LIMIT = 90
 	MINIMUM_BALANCE = 1
+  PENALTY_FAIR = 80
 	attr_reader :balance, :touched_in, :entry_station, :exit_station, :journey_track
 
 	def initialize

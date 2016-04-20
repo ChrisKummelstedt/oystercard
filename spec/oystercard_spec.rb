@@ -96,5 +96,27 @@ describe Oystercard do
         expect(card.journey_track).to include { entrystation:entry_station, exitstation:exit_station }
 			end
     end
+
+    context "Keep track check in" do
+    	it "track if someone forget to check out" do
+    		card.top_up(Oystercard::BALANCE_LIMIT)
+        card.touch_in(entry_station)
+        expect{card.touch_in(entry_station)}.to change {card.balance}.by -Oystercard::PENALTY_FAIR 
+			end
+		end
 	end
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
