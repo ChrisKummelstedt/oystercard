@@ -81,9 +81,20 @@ describe Oystercard do
         card.touch_out(exit_station)
         expect(card.exit_station).to eq exit_station
       end
+		end
 
+    context "Keeping track of journey" do
+
+    	it "keeps a empty hash when initialize" do
+        expect(card.journey_track).to eq []
+       end
+
+    	it "tracks the travel that has been done" do
+    		card.top_up(Oystercard::BALANCE_LIMIT)
+        card.touch_in(entry_station)
+        card.touch_out(exit_station)
+        expect(card.journey_track).to include {entrystation:entry_station, exitstation:exit_station}
+			end
     end
-
-
-  end
+	end
 end
