@@ -93,7 +93,7 @@ describe Oystercard do
     		card.top_up(Oystercard::BALANCE_LIMIT)
         card.touch_in(entry_station)
         card.touch_out(exit_station)
-        expect(card.journey_track).to include {entrystation:entry_station, exitstation:exit_station}
+        expect(card.journey_track).to include { entrystation:entry_station, exitstation:exit_station }
 			end
     end
 	end

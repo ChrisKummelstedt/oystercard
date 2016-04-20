@@ -24,7 +24,7 @@ class Oystercard
 	def touch_out station
 		deduct fare
 		@exit_station = station
-    current_journey = {entrystation: @entry_station, exitstation: @exit_station}
+    current_journey = { entrystation: @entry_station, exitstation: @exit_station }
     @journey_track.push(current_journey)
 		@entry_station = nil
   end
