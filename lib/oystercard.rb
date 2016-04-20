@@ -18,16 +18,27 @@ class Oystercard
 	end
 
 	def touch_in station
-		fail "You do not have the minimum balance for travel" if @balance < MINIMUM_BALANCE
-		@entry_station = station
+		if in_journey?
+			deduct PENALTY_FAIR
+			@entry_station = station
+		else
+			fail "You do not have the minimum balance for travel" if @balance < MINIMUM_BALANCE
+			@entry_station = station
+		end
 	end
 
 	def touch_out station
-		deduct fare
-		@exit_station = station
-    current_journey = { entrystation: @entry_station, exitstation: @exit_station }
-    @journey_track.push(current_journey)
-		@entry_station = nil
+		if !in_journey?
+			@exit_station = station
+			deduct PENALTY_FAIR
+			current_journey = { entrystation: "Failed to check in", exitstation: @exit_station }
+			@journey_track.push(current_journey)
+		else
+			@exit_station = station
+	    current_journey = { entrystation: @entry_station, exitstation: @exit_station }
+	    @journey_track.push(current_journey)
+			@entry_station = nil
+		end
   end
 
 	def in_journey?
