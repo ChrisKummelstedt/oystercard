@@ -1,6 +1,7 @@
 class Oystercard
 
 BALANCE_LIMIT = 90
+MINIMUM_BALANCE = 1
 attr_reader :balance, :touched_in
 
 	def initialize
@@ -9,7 +10,7 @@ attr_reader :balance, :touched_in
 
 
   def top_up(amount)
-    fail "Your balance cannot exceed #{BALANCE_LIMIT}" if (amount + @balance) > BALANCE_LIMIT
+    fail "Your balance cannot exceed £#{BALANCE_LIMIT}" if (amount + @balance) > BALANCE_LIMIT
     @balance += amount
   end
 
@@ -18,7 +19,8 @@ attr_reader :balance, :touched_in
   end
 
   def touch_in
-  	@touched_in = true
+  	fail "You do not have the minimum balance for travel" if @balance < MINIMUM_BALANCE
+    @touched_in = true
   end
 
   def touch_out

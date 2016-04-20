@@ -2,7 +2,8 @@ load "oystercard.rb"
 
 describe Oystercard do
 
-	context "balance" do
+  context "balance" do
+
 		it "shows the balance" do
 	  expect(subject.balance).to eq 0
 		end
@@ -22,6 +23,21 @@ describe Oystercard do
 	end
   
   context "contact" do
+	    balance_limit = Oystercard::BALANCE_LIMIT
+	    subject.top_up(balance_limit)
+	    expect { subject.top_up 1}.to raise_error "Your balance cannot exceed £#{balance_limit}"
+	  end
+
+  end
+
+
+describe "Touching in and out" do
+
+  context "Card has enough money" do
+
+    before do
+      subject.top_up(Oystercard::MINIMUM_BALANCE)
+    end
 
 		it "touches card in" do
 			subject.touch_in
@@ -38,9 +54,14 @@ describe Oystercard do
 			expect(subject).not_to be_in_journey
 		end
 
+  end
 
+  context "No money on the card" do
+
+    it "Does not allow travel below minimum balance" do
+      expect {subject.touch_in}.to raise_error "You do not have the minimum balance for travel"
+    end
 	end
-
-
-
 end
+end
+
