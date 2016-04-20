@@ -24,6 +24,7 @@ attr_reader :balance, :touched_in
   end
 
   def touch_out
+    deduct fare
     @touched_in = false
   end
 
@@ -31,4 +32,13 @@ attr_reader :balance, :touched_in
   	@touched_in
   end
 
+  def deduct fare
+    @balance -= fare
+  end
+
+  private
+  
+  def fare 
+    1
+  end
 end
