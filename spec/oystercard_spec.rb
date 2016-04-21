@@ -3,12 +3,12 @@ load "oystercard.rb"
 describe Oystercard do
 
   let (:card) { described_class.new }
-  let (:entry_station) { double :entry_station}
-  let (:exit_station) { double :exit_station}
+  let (:entry_station) { double :entry_station, zone: 1}
+  let (:exit_station) { double :exit_station, zone: 2}
 
   context "balance" do
 
-    it "shows the balance" do
+    it "shows the inital balance as 0" do
       expect(card.balance).to eq 0
     end
 
@@ -26,39 +26,35 @@ describe Oystercard do
     end
   end
 
-  context "contact" do
-    it "has contact" do
-      balance_limit = Oystercard::BALANCE_LIMIT
-      card.top_up(balance_limit)
-      expect { card.top_up 1}.to raise_error "Your balance cannot exceed £#{balance_limit}"
-    end
-  end
-
 
   describe "Touching in and out" do
 
     context "Card has enough money" do
 
       before do
-        card.top_up(Oystercard::MINIMUM_BALANCE)
+        card.top_up(Oystercard::BALANCE_LIMIT)
       end
 
       it "touches card in" do
-        card.touch_in(entry_station)
-        expect(card).to be_in_journey
+        expect(card).to respond_to(:touch_in).with(1).argument
       end
 
       it "touches card out" do
-        card.touch_in(entry_station)
-        card.touch_out(exit_station)
-        expect(card).not_to be_in_journey
+        expect(card).to respond_to(:touch_out).with(1).argument
       end
 
-      it "confirms user is journey" do
-        expect(card).not_to be_in_journey
+      it "changes balance upon touch out by correct amount if journey is incomplete" do
+        expect{ card.touch_out(exit_station) }.to change { card.balance }.by -6
+      end
+
+      it "changes balance upon touch out by correct amount if journey is complete" do
+        card.touch_in(entry_station)
+        expect{ card.touch_out(exit_station)}.to change { card.balance }.by -2
       end
 
     end
+
+
 
     context "No money on the card" do
 
@@ -67,56 +63,6 @@ describe Oystercard do
       end
     end
 
-    context "Knows entry and exit station" do
 
-      it "Knows which station the journey started" do
-        card.top_up(Oystercard::BALANCE_LIMIT)
-        card.touch_in(entry_station)
-        expect(card.entry_station).to eq entry_station
-      end
-
-      it "Knows which station the journey ended" do
-        card.top_up(Oystercard::BALANCE_LIMIT)
-        card.touch_in(entry_station)
-        card.touch_out(exit_station)
-        expect(card.exit_station).to eq exit_station
-      end
-		end
-
-    context "Keeping track of journey" do
-
-    	it "keeps a empty hash when initialize" do
-        expect(card.journey_track).to eq []
-       end
-
-    	it "tracks the travel that has been done" do
-    		card.top_up(Oystercard::BALANCE_LIMIT)
-        card.touch_in(entry_station)
-        card.touch_out(exit_station)
-        expect(card.journey_track).to include { entrystation:entry_station, exitstation:exit_station }
-			end
-    end
-
-    context "Keep track check in" do
-    	it "track if someone forget to check out" do
-    		card.top_up(Oystercard::BALANCE_LIMIT)
-        card.touch_in(entry_station)
-        expect{card.touch_in(entry_station)}.to change {card.balance}.by -Oystercard::PENALTY_FAIR 
-			end
-		end
-	end
+  end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
